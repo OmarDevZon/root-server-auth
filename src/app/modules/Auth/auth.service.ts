@@ -33,13 +33,26 @@ const loginUser = async (payload: TLoginUser) => {
 
   //checking if the password is correct
 
-  // if (!(await User.isPasswordMatched(payload?.password, user?.password)))
-  //   throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
+  const isPasswordMatch = async () => {
+    try {
+      const result = await bcrypt.compare(payload?.password, user?.password);
+      return result;
+    } catch (err) {
+      return false;
+    }
+  };
+
+  // Example of calling the function
+  const isPasswordMuch = await isPasswordMatch();
+  if (!isPasswordMuch) {
+    throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
+  }
+  console.log(isPasswordMatch);
 
   //create token and sent to the  client
 
   const jwtPayload = {
-    userId: user.id,
+    email: user.email,
     role: user.role,
   };
 
